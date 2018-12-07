@@ -6,7 +6,7 @@ variable "arm_client_secret" {}
 
 
 variable "namespace" {
-  default = "we123"
+  default = "kube"
 }
 
 variable "location" {
