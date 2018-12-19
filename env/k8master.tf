@@ -72,7 +72,7 @@ resource "azurerm_virtual_machine_extension" "master-vm-extension" {
         "fileUris": [
           "${azurerm_storage_account.storage.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}/master.sh"
         ],
-        "commandToExecute": "sh master.sh"
+        "commandToExecute": "bash master.sh"
 
     }
 SETTINGS

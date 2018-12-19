@@ -7,16 +7,18 @@ apt-get update
 apt-get install -y kubeadm kubelet kubectl
 kubeadm init --pod-network-cidr 192.168.0.0/16 --token "b029ee.968a33e8d8e6bb0d" --token-ttl 0
 
-mkdir -p /root/.kube 
-cp /etc/kubernetes/admin.conf /root/.kube/config 
-chown $(id -u):$(id -g) /root/.kube/config
+su albino
+mkdir -p /home/albino/.kube 
+sudo cp -i /etc/kubernetes/admin.conf /home/albino/.kube/config 
+sudo chown $(id albino -u):$(id albino -g) /home/albino/.kube/config
 
+cd /home/albino
 wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
 kubectl apply -f rbac-kdd.yaml 
 wget https://tinyurl.com/y8lvqc9g -O calico.yaml
 kubectl apply -f calico.yaml 
 
 #source <(kubectl completion bash)
-echo "source <(kubectl completion bash)" >> ~/.bashrc
+echo "source <(kubectl completion bash)" >> /home/albino/.bashrc
 
 

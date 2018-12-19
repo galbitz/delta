@@ -57,29 +57,26 @@ resource "azurerm_virtual_machine" "node1-vm" {
   }
 }
 
-# resource "azurerm_virtual_machine_extension" "control-vm-extension" {
-#   name                 = "linuxext"
-#   location             = "${azurerm_resource_group.rg.location}"
-#   resource_group_name  = "${azurerm_resource_group.rg.name}"
-#   virtual_machine_name = "${azurerm_virtual_machine.control-vm.name}"
-#   publisher            = "Microsoft.Azure.Extensions"
-#   type                 = "CustomScript"
-#   type_handler_version = "2.0"
-#   depends_on           = ["azurerm_virtual_machine.control-vm", "azurerm_storage_blob.provision", "azurerm_storage_blob.assign_drives", "azurerm_storage_blob.ConfigureRemotingForAnsible", "azurerm_storage_blob.ansible_install_centos", "azurerm_storage_blob.webdeploypriv", "azurerm_storage_blob.provisionsh"]
+resource "azurerm_virtual_machine_extension" "node1-vm-extension" {
+  name                 = "linuxext"
+  location             = "${azurerm_resource_group.rg.location}"
+  resource_group_name  = "${azurerm_resource_group.rg.name}"
+  virtual_machine_name = "${azurerm_virtual_machine.node1-vm.name}"
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+  depends_on           = ["azurerm_virtual_machine.node1-vm", "azurerm_storage_blob.node", "azurerm_virtual_machine_extension.master-vm-extension"]
 
-#   settings = <<SETTINGS
-#     {
-#         "fileUris": [
-#           "${azurerm_storage_account.storage.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}/control/ansible_install_centos.sh",
-#           "${azurerm_storage_account.storage.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}/control/provision.sh",
-#           "${azurerm_storage_account.storage.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}/control/webdeploy.priv",
-#           "${azurerm_storage_account.storage.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}/control/webdeploy.pub"
-#         ],
-#         "commandToExecute": "sh provision.sh"
+  settings = <<SETTINGS
+    {
+        "fileUris": [
+          "${azurerm_storage_account.storage.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}/node.sh"
+        ],
+        "commandToExecute": "bash node.sh"
 
-#     }
-# SETTINGS
-# }
+    }
+SETTINGS
+}
 
 data "azurerm_public_ip" "node1-public-ip" {
   name                = "${azurerm_public_ip.node1-ip.name}"
